@@ -27,13 +27,20 @@ const PaymentHistoryTable = ({ rolePermissions }: PaymentHistoryTableProps) => {
         throw new Error('Member number not found');
       }
 
+      // Fetch only active payment records from payment_requests table
       const { data, error } = await supabase
         .from('payment_requests')
         .select('*')
         .eq('member_number', memberNumber)
+        .neq('status', 'deleted') // Exclude deleted records
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching payment history:', error);
+        throw error;
+      }
+      
+      console.log('Fetched payment records:', data);
       return data;
     },
   });
