@@ -6,6 +6,7 @@ import MemberProfileCard from './MemberProfileCard';
 import SystemAnnouncements from './SystemAnnouncements';
 import PaymentDialog from './members/PaymentDialog';
 import PaymentHistoryTable from './PaymentHistoryTable';
+import RoleBasedRenderer from './RoleBasedRenderer';
 import { useState, useEffect, useMemo } from 'react';
 import { format } from 'date-fns';
 import { Loader2 } from 'lucide-react';
@@ -16,6 +17,7 @@ const DashboardView = () => {
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  // Memoize time updates to prevent unnecessary re-renders
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -123,30 +125,42 @@ const DashboardView = () => {
       </header>
       
       <div className="grid gap-4 sm:gap-6 animate-fade-in">
-        <div className="overflow-hidden">
-          <MemberProfileCard memberProfile={memberProfile} />
-        </div>
-        
-        <div className="overflow-hidden">
-          {memberProfile && (
-            <PaymentDialog 
-              isOpen={isPaymentDialogOpen}
-              onClose={() => setIsPaymentDialogOpen(false)}
-              memberId={memberProfile.id}
-              memberNumber={memberProfile.member_number}
-              memberName={memberProfile.full_name}
-              collectorInfo={null}
+        <RoleBasedRenderer allowedRoles={['member', 'admin', 'collector']}>
+          <div className="overflow-hidden">
+            <MemberProfileCard 
+              memberProfile={memberProfile} 
+              rolePermissions={rolePermissions}
             />
-          )}
-        </div>
+          </div>
+        </RoleBasedRenderer>
+        
+        <RoleBasedRenderer allowedRoles={['member', 'admin', 'collector']}>
+          <div className="overflow-hidden">
+            {memberProfile && (
+              <PaymentDialog 
+                isOpen={isPaymentDialogOpen}
+                onClose={() => setIsPaymentDialogOpen(false)}
+                memberId={memberProfile.id}
+                memberNumber={memberProfile.member_number}
+                memberName={memberProfile.full_name}
+                collectorInfo={null}
+                rolePermissions={rolePermissions}
+              />
+            )}
+          </div>
+        </RoleBasedRenderer>
 
-        <div className="overflow-hidden">
-          <SystemAnnouncements />
-        </div>
+        <RoleBasedRenderer allowedRoles={['admin', 'collector']}>
+          <div className="overflow-hidden">
+            <SystemAnnouncements rolePermissions={rolePermissions} />
+          </div>
+        </RoleBasedRenderer>
 
-        <div className="overflow-x-auto">
-          <PaymentHistoryTable />
-        </div>
+        <RoleBasedRenderer allowedRoles={['member', 'admin', 'collector']}>
+          <div className="overflow-x-auto">
+            <PaymentHistoryTable rolePermissions={rolePermissions} />
+          </div>
+        </RoleBasedRenderer>
       </div>
     </div>
   );
