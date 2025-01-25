@@ -35,9 +35,15 @@ interface MemberCardProps {
   userRole: string | null;
   onEditClick: () => void;
   onDeleteClick: () => void;
+  rolePermissions: {
+    isAdmin: boolean;
+    isCollector: boolean;
+    isMember: boolean;
+    hasMultipleRoles: boolean;
+  };
 }
 
-const MemberCard = ({ member, userRole, onEditClick, onDeleteClick }: MemberCardProps) => {
+const MemberCard = ({ member, userRole, onEditClick, onDeleteClick, rolePermissions }: MemberCardProps) => {
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -198,6 +204,7 @@ const MemberCard = ({ member, userRole, onEditClick, onDeleteClick }: MemberCard
             memberNumber={member.member_number}
             memberName={member.full_name}
             collectorInfo={collectorInfo}
+            rolePermissions={rolePermissions}
           />
 
           <NotesDialog

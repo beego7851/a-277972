@@ -30,7 +30,7 @@ interface MemberProfileCardProps {
   };
 }
 
-const MemberProfileCard = ({ memberProfile }: MemberProfileCardProps) => {
+const MemberProfileCard = ({ memberProfile, rolePermissions }: MemberProfileCardProps) => {
   const { userRole } = useRoleAccess();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
@@ -223,6 +223,7 @@ const MemberProfileCard = ({ memberProfile }: MemberProfileCardProps) => {
           memberNumber={memberProfile.member_number}
           memberName={memberProfile.full_name}
           collectorInfo={collectorInfo}
+          rolePermissions={rolePermissions}
         />
       )}
 
