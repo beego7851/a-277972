@@ -7,7 +7,7 @@ import ContactInfo from "./profile/ContactInfo";
 import AddressDetails from "./profile/AddressDetails";
 import MembershipDetails from "./profile/MembershipDetails";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
-import { ChevronDown, ChevronUp, Key } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EditProfileDialog from "./members/EditProfileDialog";
 import PaymentDialog from "./members/PaymentDialog";
@@ -22,6 +22,12 @@ import FamilyMembersSection from "./members/profile/FamilyMembersSection";
 
 interface MemberProfileCardProps {
   memberProfile: Member | null;
+  rolePermissions: {
+    isAdmin: boolean;
+    isCollector: boolean;
+    isMember: boolean;
+    hasMultipleRoles: boolean;
+  };
 }
 
 const MemberProfileCard = ({ memberProfile }: MemberProfileCardProps) => {

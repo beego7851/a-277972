@@ -5,7 +5,16 @@ import { AlertCircle } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { format } from 'date-fns';
 
-const SystemAnnouncements = () => {
+interface SystemAnnouncementsProps {
+  rolePermissions: {
+    isAdmin: boolean;
+    isCollector: boolean;
+    isMember: boolean;
+    hasMultipleRoles: boolean;
+  };
+}
+
+const SystemAnnouncements = ({ rolePermissions }: SystemAnnouncementsProps) => {
   const { data: announcements, refetch } = useQuery({
     queryKey: ['systemAnnouncements'],
     queryFn: async () => {

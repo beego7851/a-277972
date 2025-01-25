@@ -20,6 +20,12 @@ interface PaymentDialogProps {
   memberNumber: string;
   memberName: string;
   collectorInfo: Collector | null;
+  rolePermissions: {
+    isAdmin: boolean;
+    isCollector: boolean;
+    isMember: boolean;
+    hasMultipleRoles: boolean;
+  };
 }
 
 const PaymentDialog = ({ 
@@ -28,7 +34,8 @@ const PaymentDialog = ({
   memberId,
   memberNumber,
   memberName,
-  collectorInfo 
+  collectorInfo,
+  rolePermissions 
 }: PaymentDialogProps) => {
   const [selectedPaymentType, setSelectedPaymentType] = useState<string>('yearly');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'bank_transfer' | 'cash'>('bank_transfer');
