@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Member } from "@/types/member";
 import { Collector } from "@/types/collector";
+import { RolePermissions } from "@/types/roles";
 import ProfileHeader from "./profile/ProfileHeader";
 import ProfileAvatar from "./profile/ProfileAvatar";
 import ContactInfo from "./profile/ContactInfo";
@@ -19,15 +20,11 @@ import { supabase } from "@/integrations/supabase/client";
 import ProfileActions from "./members/profile/ProfileActions";
 import DiagnosticsPanel from "./members/profile/DiagnosticsPanel";
 import FamilyMembersSection from "./members/profile/FamilyMembersSection";
+import RoleBasedRenderer from "./RoleBasedRenderer";
 
 interface MemberProfileCardProps {
   memberProfile: Member | null;
-  rolePermissions: {
-    isAdmin: boolean;
-    isCollector: boolean;
-    isMember: boolean;
-    hasMultipleRoles: boolean;
-  };
+  rolePermissions: RolePermissions;
 }
 
 const MemberProfileCard = ({ memberProfile, rolePermissions }: MemberProfileCardProps) => {
@@ -150,17 +147,16 @@ const MemberProfileCard = ({ memberProfile, rolePermissions }: MemberProfileCard
                 <div className="space-y-4">
                   <ContactInfo memberProfile={memberProfile} />
                   <AddressDetails memberProfile={memberProfile} />
-                  <div className="flex flex-wrap gap-2">
-                    <ProfileActions 
-                      userRole={userRole}
-                      onEditClick={() => {
-                        console.log("Edit button clicked, opening dialog");
-                        setShowEditDialog(true);
-                      }}
-                      collectorInfo={collectorInfo}
-                      memberNumber={memberProfile.member_number}
-                    />
-                  </div>
+                  <RoleBasedRenderer allowedRoles={['admin', 'collector']}>
+                    <div className="flex flex-wrap gap-2">
+                      <ProfileActions 
+                        userRole={userRole}
+                        onEditClick={() => setShowEditDialog(true)}
+                        collectorInfo={collectorInfo}
+                        memberNumber={memberProfile.member_number}
+                      />
+                    </div>
+                  </RoleBasedRenderer>
                 </div>
 
                 <div className="space-y-4">
@@ -173,7 +169,7 @@ const MemberProfileCard = ({ memberProfile, rolePermissions }: MemberProfileCard
             </div>
           </div>
 
-          {userRole === 'admin' && (
+          <RoleBasedRenderer allowedRoles={['admin']}>
             <div className="mt-6 border-t border-white/10 pt-4">
               <Button
                 onClick={() => setShowDiagnostics(!showDiagnostics)}
@@ -193,7 +189,7 @@ const MemberProfileCard = ({ memberProfile, rolePermissions }: MemberProfileCard
                 showDiagnostics={showDiagnostics}
               />
             </div>
-          )}
+          </RoleBasedRenderer>
         </CardContent>
       </Card>
 

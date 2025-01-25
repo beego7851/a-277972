@@ -2,14 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from "@/integrations/supabase/client";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { RolePermissions } from "@/types/roles";
+import RoleBasedRenderer from "./RoleBasedRenderer";
 
 interface PaymentHistoryTableProps {
-  rolePermissions: {
-    isAdmin: boolean;
-    isCollector: boolean;
-    isMember: boolean;
-    hasMultipleRoles: boolean;
-  };
+  rolePermissions: RolePermissions;
 }
 
 const PaymentHistoryTable = ({ rolePermissions }: PaymentHistoryTableProps) => {
@@ -53,9 +50,9 @@ const PaymentHistoryTable = ({ rolePermissions }: PaymentHistoryTableProps) => {
             <td>£{payment.amount}</td>
             <td>{payment.status}</td>
             <td>
-              {rolePermissions.isAdmin && (
+              <RoleBasedRenderer allowedRoles={['admin']}>
                 <Button variant="outline">View Details</Button>
-              )}
+              </RoleBasedRenderer>
             </td>
           </tr>
         ))}

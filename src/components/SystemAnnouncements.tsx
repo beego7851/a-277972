@@ -4,14 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { format } from 'date-fns';
+import { RolePermissions } from "@/types/roles";
+import RoleBasedRenderer from "./RoleBasedRenderer";
 
 interface SystemAnnouncementsProps {
-  rolePermissions: {
-    isAdmin: boolean;
-    isCollector: boolean;
-    isMember: boolean;
-    hasMultipleRoles: boolean;
-  };
+  rolePermissions: RolePermissions;
 }
 
 const SystemAnnouncements = ({ rolePermissions }: SystemAnnouncementsProps) => {
@@ -57,23 +54,24 @@ const SystemAnnouncements = ({ rolePermissions }: SystemAnnouncementsProps) => {
         System Announcements
       </h2>
       <div className="space-y-6">
-        {announcements?.map((announcement) => (
-          <Alert 
-            key={announcement.id} 
-            variant={announcement.severity === "error" ? "destructive" : "default"}
-            className={`
-              bg-dashboard-card/80 
-              border-l-4 
-              ${announcement.severity === 'info' ? 'border-l-dashboard-info' : ''}
-              ${announcement.severity === 'success' ? 'border-l-dashboard-success' : ''}
-              ${announcement.severity === 'warning' ? 'border-l-dashboard-warning' : ''}
-              ${announcement.severity === 'error' ? 'border-l-dashboard-error' : ''}
-              p-6
-              transition-all
-              duration-200
-              hover:bg-dashboard-cardHover/80
-            `}
-          >
+        <RoleBasedRenderer allowedRoles={['admin', 'collector']}>
+          {announcements?.map((announcement) => (
+            <Alert 
+              key={announcement.id} 
+              variant={announcement.severity === "error" ? "destructive" : "default"}
+              className={`
+                bg-dashboard-card/80 
+                border-l-4 
+                ${announcement.severity === 'info' ? 'border-l-dashboard-info' : ''}
+                ${announcement.severity === 'success' ? 'border-l-dashboard-success' : ''}
+                ${announcement.severity === 'warning' ? 'border-l-dashboard-warning' : ''}
+                ${announcement.severity === 'error' ? 'border-l-dashboard-error' : ''}
+                p-6
+                transition-all
+                duration-200
+                hover:bg-dashboard-cardHover/80
+              `}
+            >
             <div className="flex items-start gap-3">
               <AlertCircle className={`
                 h-5 w-5 mt-1
@@ -96,8 +94,10 @@ const SystemAnnouncements = ({ rolePermissions }: SystemAnnouncementsProps) => {
                 </AlertDescription>
               </div>
             </div>
-          </Alert>
-        ))}
+            </Alert>
+          ))}
+        </RoleBasedRenderer>
+        
         {(!announcements || announcements.length === 0) && (
           <Alert className="bg-dashboard-card border-dashboard-cardBorder">
             <AlertCircle className="h-5 w-5 text-dashboard-muted" />
